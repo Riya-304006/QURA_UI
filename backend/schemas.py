@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 
 class PriorityEnum(str, Enum):
     normal = "Normal"
@@ -16,8 +17,8 @@ class PatientResponse(BaseModel):
     priority: str
     arrival_time: datetime
     status: str
-    position: int | None = None
-    estimated_wait_time: int | None = None
+    position: Optional[int] = None
+    estimated_wait_time: Optional[int] = None
 
     model_config = ConfigDict(from_attributes=True)
 

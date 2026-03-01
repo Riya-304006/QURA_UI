@@ -6,6 +6,20 @@ export default function ReceptionistDashboard() {
     const [priority, setPriority] = useState('Normal')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const [nameError, setNameError] = useState('')
+
+    const handleNameChange = (e) => {
+        const value = e.target.value
+        // Allow only alphabets (no spaces, no numbers, no special characters)
+        const filtered = value.replace(/[^A-Za-z]/g, '')
+        setName(filtered)
+        
+        if (filtered && filtered.length < 2) {
+            setNameError('Name must be at least 2 characters')
+        } else {
+            setNameError('')
+        }
+    }
 
     const fetchQueue = async () => {
         try {
@@ -30,7 +44,10 @@ export default function ReceptionistDashboard() {
 
     const handleAddPatient = async (e) => {
         e.preventDefault()
-        if (!name.trim()) return
+        if (!name.trim() || name.length < 2) {
+            setNameError('Name must be at least 2 characters')
+            return
+        }
         setLoading(true)
         try {
             const res = await fetch('http://localhost:8000/add_patient', {
@@ -82,10 +99,11 @@ export default function ReceptionistDashboard() {
                             <input
                                 type="text"
                                 value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="Enter patient name"
+                                onChange={handleNameChange}
+                                placeholder="Enter patient name (alphabets only)"
                                 required
                             />
+                            {nameError && <span className="error-text">{nameError}</span>}
                         </div>
                         <div className="form-group">
                             <label>Priority</label>

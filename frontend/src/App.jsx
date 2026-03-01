@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import LoginPage from './components/LoginPage'
 import ReceptionistDashboard from './components/ReceptionistDashboard'
 import UserDashboard from './components/UserDashboard'
+import Footer from './components/Footer'
 import './index.css'
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
                         element={user?.role === 'user' ? <UserDashboard user={user} /> : <Navigate to="/" />}
                     />
                 </Routes>
+
+                <Footer />
             </div>
         </BrowserRouter>
     )

@@ -3,16 +3,49 @@ import { useState } from 'react'
 export default function LoginPage({ onLogin }) {
     const [user, setUser] = useState(null)
     const [formData, setFormData] = useState({ name: '', number: '' })
+    const [errors, setErrors] = useState({ name: '', number: '' })
+
+    const handleNameChange = (e) => {
+        const value = e.target.value
+        // Allow only alphabets (no spaces, no numbers, no special characters)
+        const filtered = value.replace(/[^A-Za-z]/g, '')
+        setFormData({ ...formData, name: filtered })
+        
+        if (filtered && filtered.length < 2) {
+            setErrors({ ...errors, name: 'Name must be at least 2 characters' })
+        } else {
+            setErrors({ ...errors, name: '' })
+        }
+    }
+
+    const handleNumberChange = (e) => {
+        const value = e.target.value
+        // Allow only digits, max 10
+        const filtered = value.replace(/[^0-9]/g, '').slice(0, 10)
+        setFormData({ ...formData, number: filtered })
+        
+        if (filtered && filtered.length !== 10) {
+            setErrors({ ...errors, number: 'Phone number must be exactly 10 digits' })
+        } else {
+            setErrors({ ...errors, number: '' })
+        }
+    }
 
     const handleLoginSubmit = (e) => {
         e.preventDefault()
         if (!formData.name.trim() || !formData.number.trim()) return
+        if (formData.name.length < 2 || formData.number.length !== 10) {
+            setErrors({
+                name: formData.name.length < 2 ? 'Name must be at least 2 characters' : '',
+                number: formData.number.length !== 10 ? 'Phone number must be exactly 10 digits' : ''
+            })
+            return
+        }
 
-        // Simulate login by setting user state
         setUser({
             name: formData.name.trim(),
             number: formData.number.trim(),
-            picture: `https://api.dicebear.com/7.x/initials/svg?seed=${formData.name}` // Optional: Avatar generation
+            picture: `https://api.dicebear.com/7.x/initials/svg?seed=${formData.name}`
         })
     }
 
@@ -35,20 +68,23 @@ export default function LoginPage({ onLogin }) {
                             <input
                                 type="text"
                                 value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                placeholder="Ex. John Doe"
+                                onChange={handleNameChange}
+                                placeholder="Ex. JohnDoe"
                                 required
                             />
+                            {errors.name && <span className="error-text">{errors.name}</span>}
                         </div>
                         <div className="form-group text-left">
                             <label>Phone Number</label>
                             <input
                                 type="tel"
                                 value={formData.number}
-                                onChange={(e) => setFormData({ ...formData, number: e.target.value })}
-                                placeholder="Ex. +1 234 567 8900"
+                                onChange={handleNumberChange}
+                                placeholder="Ex. 1234567890"
+                                maxLength="10"
                                 required
                             />
+                            {errors.number && <span className="error-text">{errors.number}</span>}
                         </div>
                         <button type="submit" className="btn-primary mt-4">
                             Continue
